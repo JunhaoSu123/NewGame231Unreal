@@ -1,0 +1,55 @@
+1========================================================
+cpp
+bool UMyBlueprintFunctionLibrary::LoadTxt(FString FileNameA, FString& SaveTextA) {
+	return FFileHelper::LoadFileToString(SaveTextA, *(FPaths::ProjectDir() + FileNameA));
+}
+
+bool UMyBlueprintFunctionLibrary::SaveTxt(FString SaveTextB, FString& FileNameB) {
+	return FFileHelper::SaveStringToFile(SaveTextB, *(FPaths::ProjectDir() + FileNameB));
+}
+
+h
+public:
+
+		UFUNCTION(BlueprintPure, Category = "Custom", meta = (Keywords = "LoadTxt"))
+			static bool LoadTxt(FString FilenameA, FString& SaveTextA);
+
+		UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "SaveTxt"))
+			static bool SaveTxt(FString SaveTextB, FString& FileNameB);
+================================================================================
+
+2===========================================================
+cpp
+FString UMyBlueprintFunctionLibrary::LoadFileToString(FString Filename) {
+	FString directory = FPaths::ProjectContentDir();
+	FString result;
+	IPlatformFile& file = FPlatformFileManager::Get().GetPlatformFile();
+
+	if (file.CreateDirectory(*directory)) {
+		FString myFile = directory + "/" + Filename;
+		FFileHelper::LoadFileToString(result, *myFile);
+	}
+
+	return result;
+}
+
+TArray<FString> UMyBlueprintFunctionLibrary::LoadFileToStringArray(FString Filename) {
+	FString directory = FPaths::ProjectContentDir();
+	TArray<FString> result;
+	IPlatformFile& file = FPlatformFileManager::Get().GetPlatformFile();
+
+	if (file.CreateDirectory(*directory)) {
+		FString myFile = directory + "/" + Filename;
+		FFileHelper::LoadFileToStringArray(result, *myFile);
+	}
+
+	return result;
+}
+
+h
+		UFUNCTION(BlueprintCallable, Category = "File I/O")
+		static FString LoadFileToString(FString Filename);
+
+		UFUNCTION(BlueprintCallable, Category = "File I/O")
+		static TArray<FString> LoadFileToStringArray(FString Filename);
+		
